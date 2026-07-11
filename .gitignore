@@ -1,0 +1,6 @@
+.wakatime-project
+*.vcd
+build
+.venv
+out
+__pycache__
