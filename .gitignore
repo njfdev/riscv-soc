@@ -4,3 +4,12 @@ build
 .venv
 out
 __pycache__
+/disk/*
+!/disk/.gitkeep
+*.map
+*.tar
+*.o
+*.elf
+*.bin
+*.log
+*.pcap
