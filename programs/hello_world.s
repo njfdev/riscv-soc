@@ -1,4 +1,4 @@
-.global _start
+.globl _start
 
 .text
 _start:
