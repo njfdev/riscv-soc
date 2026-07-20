@@ -54,6 +54,9 @@ void kernel_main(void) {
   else
     printf("%s != %s\n", s1, s2);
 
+  PANIC("nothing should follow this panic");
+  printf("unreachable code");
+
   for (;;)
     __asm__ __volatile__("wfi");
 }
