@@ -38,6 +38,6 @@ CFLAGS = -std=c11 -O2 -g3 -Wall -Wextra --target=riscv32-unknown-elf -fuse-ld=ll
 nos:
 	mkdir -p $(NOS_SRC) $(NOS_BUILD)
 
-	$(CC) $(CFLAGS) -Wl,-T$(NOS_SRC)/kernel.ld -Wl,-Map=$(NOS_BUILD)/kernel.map -o $(NOS_BUILD)/kernel.elf $(NOS_SRC)/kernel.c
+	$(CC) $(CFLAGS) -Wl,-T$(NOS_SRC)/kernel.ld -Wl,-Map=$(NOS_BUILD)/kernel.map -o $(NOS_BUILD)/kernel.elf $(NOS_SRC)/kernel.c $(NOS_SRC)/common.c
 	
 	$(QEMU) -machine virt -bios default -nographic -serial mon:stdio --no-reboot -kernel $(NOS_BUILD)/kernel.elf
