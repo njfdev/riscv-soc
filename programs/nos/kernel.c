@@ -33,19 +33,26 @@ void putchar(char ch) {
   sbi_call(ch, 0, 0, 0, 0, 0, 0, 1);
 }
 
-void *memset(void *buf, char c, size_t n) {
-  uint8_t *ptr = (uint8_t *) buf;
-  while (n--) {
-    *ptr++ = c;
-  }
-  return buf;
-}
-
 void kernel_main(void) {
   memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 
   printf("\n\nHello %s!\n", "world");
   printf("%d + %d = %x\n", 12, 18, 12+18);
+
+  const char *s1 = "Jingles";
+  const char *s2 = "Jinglez";
+
+  // equal case (should print "Jingles != Jingles")
+  if (!strcmp(s1, s1))
+    printf("%s == %s\n", s1, s1);
+  else
+    printf("%s != %s\n", s1, s1);
+
+  // different case (should print "Jingles != Jinglez")
+  if (!strcmp(s1, s2))
+    printf("%s == %s\n", s1, s2);
+  else
+    printf("%s != %s\n", s1, s2);
 
   for (;;)
     __asm__ __volatile__("wfi");
