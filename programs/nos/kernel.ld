@@ -22,7 +22,14 @@ SECTIONS {
     __bss_end = .;
   }
 
+  /* Stack */
   . = ALIGN(4);
   . += 128 * 1024; /* 128KiB */
   __stack_top = .;
+
+  /* RAM */
+  . = ALIGN(4096);
+  __free_ram = .;
+  . += 64 * 1024 * 1024; /* 64 MiB */
+  __free_ram_end = .;
 }
