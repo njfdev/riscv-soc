@@ -33,10 +33,16 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 verilate:
 	mkdir -p $(VERILATOR_BUILD_DIR)
 	cmake -S . -B $(VERILATOR_BUILD_DIR)
-	cmake --build $(VERILATOR_BUILD_DIR)
+	cmake --build $(VERILATOR_BUILD_DIR) --parallel
 
-sim: verilate
+run: verilate
 	$(VERILATOR_EXE)
+
+cleanup:
+	cmake --build $(VERILATOR_BUILD_DIR) --target clean --parallel
+
+fullcleanup:
+	rm -r $(BUILD)
 
 CC = clang
 CFLAGS = -std=c11 -O2 -g3 -Wall -Wextra --target=riscv32-unknown-elf -fuse-ld=lld -fno-stack-protector -ffreestanding -nostdlib
