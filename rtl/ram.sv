@@ -12,14 +12,14 @@ module ram(
   localparam RAM_BYTES = 512 * 1024; // 512 KiB of RAM
   localparam RAM_WORDS = RAM_BYTES/4;
 
-  logic [31:0] ram [0:RAM_WORDS-1] = '{default:'0};
+  logic [31:0] ram [0:RAM_WORDS-1];
 
-  assign dataBus = (readRam && !writeRam) ? ram[addrBus] : 32'bz;
+  assign dataBus = (readRam && !writeRam) ? ram[addrBus/4] : 32'bz;
 
   always @(negedge clk) begin
 
     if (writeRam && !readRam) begin
-      ram[addrBus] <= dataBus;
+      ram[addrBus/4] <= dataBus;
     end
 
   end

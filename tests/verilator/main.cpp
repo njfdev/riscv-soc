@@ -16,32 +16,18 @@ void cycle(std::unique_ptr<Vsoc>& soc) {
 int main() {
   auto soc = std::make_unique<Vsoc>();
 
-  // set 2 memory addresses
-  soc->rootp->soc__DOT__addrBus = 1;
-  soc->rootp->soc__DOT__tbData = 0xDEADBEEF;
-  soc->rootp->soc__DOT__tbDataEnable = true;
-  soc->rootp->soc__DOT__memWrite = true;
-  printf("Setting 0x%08x to 0x%08x\n", soc->rootp->soc__DOT__addrBus, soc->rootp->soc__DOT__tbData);
-  cycle(soc);
-  soc->rootp->soc__DOT__addrBus = 2;
-  soc->rootp->soc__DOT__tbData = 0x12345678;
-  printf("Setting 0x%08x to 0x%08x\n", soc->rootp->soc__DOT__addrBus, soc->rootp->soc__DOT__tbData);
-  cycle(soc);
+  // basic assembly program
+  soc->rootp->soc__DOT__ram0__DOT__ram[0] = 0b000000010010'00010'000'00011'0010011;   // ADDI x3, x2, 17
+  soc->rootp->soc__DOT__ram0__DOT__ram[1] = 0b0000000'00011'00010'000'00001'0110011;  // ADD x1, x2, x3
+  soc->rootp->soc__DOT__ram0__DOT__ram[2] = 0b00000000000000000000'00000'1101111;     // JAL x0, 0
 
-  // read the 2 memory addresses and the 0 address
-  soc->rootp->soc__DOT__addrBus = 0;
-  soc->rootp->soc__DOT__tbDataEnable = false;
-  soc->rootp->soc__DOT__memWrite = false;
-  soc->rootp->soc__DOT__memRead = true;
-  cycle(soc);
-  std::printf("Reading at 0x%08x which is 0x%08x\n", soc->rootp->soc__DOT__addrBus, soc->rootp->soc__DOT__dataBus);
-  soc->rootp->soc__DOT__addrBus = 1;
-  cycle(soc);
-  std::printf("Reading at 0x%08x which is 0x%08x\n", soc->rootp->soc__DOT__addrBus, soc->rootp->soc__DOT__dataBus);
-  soc->rootp->soc__DOT__addrBus = 2;
-  cycle(soc);
-  std::printf("Reading at 0x%08x which is 0x%08x\n", soc->rootp->soc__DOT__addrBus, soc->rootp->soc__DOT__dataBus);
-
+  do {
+    cycle(soc);
+    printf("Program Counter: %08x\n", soc->rootp->soc__DOT__cpu0__DOT__pc);
+    printf("\tData at PC: %08x\n", soc->rootp->soc__DOT__ram0__DOT__ram[soc->rootp->soc__DOT__cpu0__DOT__pc/4]);
+    printf("\tInstr register: %08x\n", soc->rootp->soc__DOT__cpu0__DOT__instr);
+    printf("Phase: %s\n", soc->rootp->soc__DOT__cpu0__DOT__state == 1 ? "execute" : "fetch");
+  } while (std::cin.get() != 'q');
 
   soc->final();
 }

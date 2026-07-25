@@ -1,5 +1,6 @@
 module soc (
-  input clk
+  input clk,
+  input reset
 );
 
   parameter RESET_ADDR = 32'h00000000;
@@ -24,6 +25,21 @@ module soc (
 
     .readRam (memRead),
     .writeRam (memWrite)
+  );
+
+  cpu_top #(
+    .ADDR_WIDTH (ADDR_WIDTH),
+    .RESET_ADDR (RESET_ADDR)
+  ) cpu0 (
+    .clk (clk),
+
+    .addrBus (addrBus),
+    .dataBus (dataBus),
+
+    .memRead (memRead),
+    .memWrite (memWrite),
+
+    .reset (reset)
   );
 
 
