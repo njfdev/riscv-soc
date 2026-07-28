@@ -35,6 +35,15 @@ module cpu_top #(
   
   /************************ ALU ************************/
 
+  wire [31:0] aluIn1 = rs1;
+  wire [31:0] aluIn2 = isALUImm ? {20'b0, immI} : rs2;
+
+  wire [31:0] aluPlus = aluIn1 + aluIn2;
+
+  wire [31:0] aluOut =
+    funct3[0] ? aluPlus :
+    32'b0;
+
   
 
   logic [31:0] regFile [0:31] /* verilator public_flat_rw */ = '{default:'0};
@@ -45,6 +54,11 @@ module cpu_top #(
   wire [4:0] rs1Index = instr[19:15];
   // only for branch, store, and ALU (non-immediate) instructions
   wire [4:0] rs2Index = instr[24:20];
+
+  wire [7:0] funct3 = 8'b1 << instr[14:12];
+
+  wire [31:0] rs1 = regFile[rs1Index];
+  wire [31:0] rs2 = regFile[rs2Index]; // also shamt for bit shifts
   
   logic [31:0] instr;
 
@@ -87,6 +101,10 @@ module cpu_top #(
               /* verilator lint_off WIDTHEXPAND */
               regFile[rdIndex] = pc+4;
               /* verilator lint_on WIDTHEXPAND */
+            end
+
+            isALUImm, isALUReg: begin
+              regFile[rdIndex] = aluOut;
             end
 
           endcase
